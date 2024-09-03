@@ -4,19 +4,25 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 require('dotenv').config();
 
+const bodyParser = require('body-parser');
 const app = express();
 
-const cors = require('cors');
 
-const corsOptions = {
-    origin: 'https://mediste.vercel.app', // Allow your frontend origin
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-    allowedHeaders: 'Content-Type, Authorization', // Ensure necessary headers are allowed
-    optionsSuccessStatus: 204
-};
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors(corsOptions));
+const allowedOrigins = ["https://mediste.vercel.app"];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 
   
 // MongoDB connection
