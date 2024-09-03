@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 # Node modules
 node_modules/
 
 # Environment variables
+=======
+>>>>>>> 81e836130fed2a45a14b9e29842b1fb4c0ccbded
 .env
