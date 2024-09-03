@@ -63,7 +63,7 @@ const contentSchema = new mongoose.Schema({
 const Content = mongoose.model('Content', contentSchema);
 
 // Sign up route
-app.post('/api/signup', async (req, res) => {
+app.post('/signup', async (req, res) => {
   try {
     const { username, password, hospital, email } = req.body;
 
@@ -89,7 +89,7 @@ app.post('/api/signup', async (req, res) => {
 });
 
 // Login route
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -115,7 +115,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Public profile route
-app.get('/api/profile', async (req, res) => {
+app.get('/profile', async (req, res) => {
   try {
     const { username } = req.query;
 
@@ -132,7 +132,7 @@ app.get('/api/profile', async (req, res) => {
 });
 
 // Create content
-app.post('/api/content', async (req, res) => {
+app.post('/content', async (req, res) => {
     try {
       const { userId, name, quantity, expiryDate, manufacturingDate } = req.body;
   
@@ -150,7 +150,7 @@ app.post('/api/content', async (req, res) => {
       res.status(500).json({ error: 'Error creating content: ' + error.message });
     }
   });
-  app.get('/api/content/full', async (req, res) => {
+  app.get('/content/full', async (req, res) => {
     try {
       const allContent = await Content.find();
       res.status(200).json(allContent);
@@ -159,7 +159,7 @@ app.post('/api/content', async (req, res) => {
     }
   });
   // Get content for a specific user
-  app.get('/api/content/:userId', async (req, res) => {
+  app.get('/content/:userId', async (req, res) => {
     try {
       const { userId } = req.params;
       const userContent = await Content.find({ userId });
@@ -170,7 +170,7 @@ app.post('/api/content', async (req, res) => {
   });
   
   // Update content by ID
-  app.put('/api/content/:id', async (req, res) => {
+  app.put('/content/:id', async (req, res) => {
     const { id } = req.params;
     const { name, quantity, expiryDate, manufacturingDate } = req.body;
     try {
@@ -186,7 +186,7 @@ app.post('/api/content', async (req, res) => {
   });
   
   // Delete content by ID
-  app.delete('/api/content/:id', async (req, res) => {
+  app.delete('/content/:id', async (req, res) => {
     const { id } = req.params;
     try {
       await Content.findByIdAndDelete(id);
