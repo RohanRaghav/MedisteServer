@@ -6,12 +6,15 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware to parse JSON
-app.use(express.json());
-
-// Middleware to handle CORS
-app.use(cors());
-
+const corsOptions = {
+    origin: 'https://mediste.vercel.app', // Allow your frontend origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    optionsSuccessStatus: 204
+  };
+  
+  app.use(cors(corsOptions));
+  
 // MongoDB connection
 const mongoURI = process.env.MONGODB_URI;
 
