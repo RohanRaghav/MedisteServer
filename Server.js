@@ -1,35 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-require('dotenv').config();
-const path = require('path');
-
-const bodyParser = require('body-parser');
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
+require('dotenv').config();
 
-const allowedOrigins = ["https://mediste.vercel.app"];
+const app = express();
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Add all methods you use
-  allowedHeaders: ['Content-Type', 'Authorization'] // Specify headers if needed
-}));
+// Middleware to parse JSON
+app.use(express.json());
 
+// Middleware to handle CORS
+app.use(cors());
 
-  
 // MongoDB connection
 const mongoURI = process.env.MONGODB_URI;
 
@@ -39,12 +21,7 @@ mongoose.connect(mongoURI, {
 })
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
 // User Schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -201,12 +178,8 @@ app.post('/api/content', async (req, res) => {
   });
   
 
-// Export the app for Vercel
-module.exports = app;
-
-// Start server locally
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
+// Start the server
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
