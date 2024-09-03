@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const cors = require('cors');
 require('dotenv').config();
 const path = require('path');
 
@@ -12,8 +11,10 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+const cors = require('cors');
 
 const allowedOrigins = ["https://mediste.vercel.app"];
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -22,8 +23,11 @@ app.use(cors({
       return callback(new Error(msg), false);
     }
     return callback(null, true);
-  }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Add all methods you use
+  allowedHeaders: ['Content-Type', 'Authorization'] // Specify headers if needed
 }));
+
 
   
 // MongoDB connection
