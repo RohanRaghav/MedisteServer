@@ -191,8 +191,12 @@ app.post('/api/content', async (req, res) => {
   });
   
 
-// Start the server
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Export the app for Vercel
+module.exports = app;
+
+// Start server locally
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
