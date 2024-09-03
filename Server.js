@@ -35,7 +35,12 @@ mongoose.connect(mongoURI, {
 })
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 // User Schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
