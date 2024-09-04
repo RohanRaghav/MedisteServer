@@ -38,11 +38,18 @@ const contentSchema = new mongoose.Schema({
   name: { type: String, required: true },
   quantity: { type: Number, required: true },
   expiryDate: { type: Date, required: true },
+  hospital: { type: String, required: true },
   manufacturingDate: { type: Date, required: true },
 }, { collection: 'content' });
 
 const Content = mongoose.model('Content', contentSchema);
+const messageSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  hospitalName: { type: String, required: true },
+  query: { type: String, required: true },
+}, { collection: 'messages' });
 
+const Message = mongoose.model('Message', messageSchema);
 // Sign up route
 app.post('/api/signup', async (req, res) => {
   try {
@@ -72,9 +79,9 @@ app.post('/api/signup', async (req, res) => {
 // Login route
 app.post('/api/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password,  hospital } = req.body;
 
-    if (!username || !password) {
+    if (!username || !password  || !hospital) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
@@ -115,7 +122,7 @@ app.get('/api/profile', async (req, res) => {
 // Create content
 app.post('/api/content', async (req, res) => {
     try {
-      const { userId, name, quantity, expiryDate, manufacturingDate } = req.body;
+      const { userId, name, quantity, expiryDate, manufacturingDate, hospital } = req.body;
   
       const newContent = new Content({
         userId,
@@ -123,6 +130,7 @@ app.post('/api/content', async (req, res) => {
         quantity,
         expiryDate,
         manufacturingDate,
+        hospital
       });
   
       await newContent.save();
@@ -176,9 +184,38 @@ app.post('/api/content', async (req, res) => {
       res.status(500).json({ error: 'Error deleting content: ' + error.message });
     }
   });
-  
+// Define the path to the messages file
+// Message Schema
+// Endpoint to get all messages
+app.get('/api/messages', async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Error fetching messages' });
+  }
+});
 
-// Start the server
+// Endpoint to post a new message
+app.post('/api/messages', async (req, res) => {
+  try {
+    const { userId, hospitalName, query } = req.body;
+
+    if (!userId || !hospitalName || !query) {
+      return res.status(400).json({ error: 'Invalid message format' });
+    }
+
+    const newMessage = new Message({ userId, hospitalName, query });
+    await newMessage.save();
+    
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.error('Error creating message:', error);
+    res.status(500).json({ error: 'Error creating message' });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
