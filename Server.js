@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   hospital: { type: String, required: true },
+  region: { type: String, required: true },
   email: { type: String, required: true }
 });
 
@@ -39,6 +40,7 @@ const contentSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   expiryDate: { type: Date, required: true },
   hospital: { type: String, required: true },
+  region: { type: String, required: true },
   manufacturingDate: { type: Date, required: true },
 }, { collection: 'content' });
 
@@ -53,9 +55,9 @@ const Message = mongoose.model('Message', messageSchema);
 // Sign up route
 app.post('/api/signup', async (req, res) => {
   try {
-    const { username, password, hospital, email } = req.body;
+    const { username, password, hospital, email, region } = req.body;
 
-    if (!username || !password || !hospital || !email) {
+    if (!username || !password || !hospital || !email || !region) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -66,7 +68,7 @@ app.post('/api/signup', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ username, password: hashedPassword, hospital, email });
+    const newUser = new User({ username, password: hashedPassword, hospital, email, region });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully', username });
@@ -79,9 +81,9 @@ app.post('/api/signup', async (req, res) => {
 // Login route
 app.post('/api/login', async (req, res) => {
   try {
-    const { username, password,  hospital } = req.body;
+    const { username, password,  hospital,region } = req.body;
 
-    if (!username || !password  || !hospital) {
+    if (!username || !password  || !hospital || !region) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
@@ -122,7 +124,7 @@ app.get('/api/profile', async (req, res) => {
 // Create content
 app.post('/api/content', async (req, res) => {
     try {
-      const { userId, name, quantity, expiryDate, manufacturingDate, hospital } = req.body;
+      const { userId, name, quantity, expiryDate, manufacturingDate, hospital,region } = req.body;
   
       const newContent = new Content({
         userId,
@@ -130,6 +132,7 @@ app.post('/api/content', async (req, res) => {
         quantity,
         expiryDate,
         manufacturingDate,
+        region,
         hospital
       });
   
